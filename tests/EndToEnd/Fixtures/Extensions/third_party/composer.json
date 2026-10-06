@@ -1,0 +1,23 @@
+{
+    "name": "calien-fixture/third-party",
+    "type": "typo3-cms-extension",
+    "description": "Fixture extension of the end-to-end tests",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "typo3/cms-core": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Calien\\Typo3DeprecationCauser\\Tests\\EndToEnd\\Fixtures\\Extensions\\ThirdParty\\": "Classes/"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "third_party",
+            "version": "1.0.0",
+            "Package": {
+                "providesPackages": {}
+            }
+        }
+    }
+}

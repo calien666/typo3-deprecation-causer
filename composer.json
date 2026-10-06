@@ -27,6 +27,7 @@
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
+        "sbuerk/fixture-packages": "^1.1.4",
         "typo3/testing-framework": "^9.7 || ^10.0"
     },
     "minimum-stability": "dev",
@@ -46,6 +47,7 @@
         "bin-dir": ".Build/bin",
         "sort-packages": true,
         "allow-plugins": {
+            "sbuerk/fixture-packages": true,
             "typo3/class-alias-loader": true,
             "typo3/cms-composer-installers": true
         }
@@ -54,6 +56,13 @@
         "typo3/cms": {
             "web-dir": ".Build/Web",
             "app-dir": ".Build"
+        },
+        "sbuerk/fixture-packages": {
+            "paths": {
+                "tests/EndToEnd/Fixtures/Extensions/*": [
+                    "autoload"
+                ]
+            }
         }
     }
 }

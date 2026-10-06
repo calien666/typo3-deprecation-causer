@@ -10,3 +10,14 @@
     `composer.json`.
   * Code style follows the TYPO3 core php-cs-fixer rule set, PHPStan runs on level `max` with the PHPUnit and strict
     rules. The package is licensed under GPL-2.0-or-later.
+* [FEATURE] Report deprecations caused by TYPO3 project code
+  * `Extension` is registered in `<extensions>`; with `<source ignoreIndirectDeprecations="true">` it reports a
+    deprecation that project code or the test causes through `GeneralUtility::makeInstance()`, dependency
+    injection or `$this->get()` of a functional test. Deprecations among core and third-party code stay
+    suppressed.
+  * `Typo3PassThroughPaths` lists the files of TYPO3 and the testing framework that instantiate on behalf of their
+    caller; the parameter `passThroughPaths` adds more.
+  * Builds on `calien/phpunit-deprecation-causer` 11, 12 or 13, matching the PHPUnit major of the project, and
+    supports TYPO3 13.4, 14.3 and 15.
+  * End-to-end tests run every scenario in a TYPO3 functional test instance with fixture extensions loaded through
+    `sbuerk/fixture-packages`.

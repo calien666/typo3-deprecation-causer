@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="../../../.Build/vendor/phpunit/phpunit/phpunit.xsd"
+  bootstrap="../../../.Build/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php"
+  cacheDirectory="../../../.cache/phpunit-fixtures"
+  colors="false"
+  failOnDeprecation="true"
+>
+  <testsuites>
+    <testsuite name="Scenarios">
+      <directory suffix="Scenarios.php">Scenarios/</directory>
+    </testsuite>
+  </testsuites>
+  <source ignoreIndirectDeprecations="true">
+    <include>
+      <directory>Extensions/first_party/Classes/</directory>
+    </include>
+  </source>
+  <extensions>
+    <bootstrap class="Calien\Typo3DeprecationCauser\Extension"/>
+  </extensions>
+</phpunit>
