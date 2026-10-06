@@ -57,13 +57,10 @@ final class ExtensionTest extends TestCase
         }
     }
 
-    /**
-     * TYPO3 15 no longer loads `ext_tables.php`; TYPO3 14 loads it and deprecates loading it, once while loading the
-     * single files and once while concatenating them into the cache file; TYPO3 13 loads it without deprecation.
-     */
     #[Test]
     #[DataProvider('bootstrapScenarioProvider')]
-    public function reportsDeprecationsCausedByProjectBootstrapFiles(
+    #[DataProvider('tcaScenarioProvider')]
+    public function reportsDeprecationsCausedByProjectConfiguration(
         string $configuration,
         string $scenarios,
         int $tests,
@@ -76,6 +73,10 @@ final class ExtensionTest extends TestCase
         self::assertSame($expectedDeprecations > 0 ? 1 : 0, $exitCode, $output);
     }
 
+    /**
+     * TYPO3 15 no longer loads `ext_tables.php`; TYPO3 14 loads it and deprecates loading it, once while loading the
+     * single files and once while concatenating them into the cache file; TYPO3 13 loads it without deprecation.
+     */
     public static function bootstrapScenarioProvider(): Generator
     {
         $extTables = class_exists(ExtTablesFactory::class) ? 1 : 0;
@@ -116,6 +117,29 @@ final class ExtensionTest extends TestCase
             'tests' => 2,
             'expectedDeprecations' => 1 + $extTables,
         ];
+    }
+
+    /**
+     * The core reports all TCA migrations of an instance in one deprecation.
+     */
+    public static function tcaScenarioProvider(): Generator
+    {
+        $expectations = [
+            'ProjectTcaScenarios' => [1, 0, 1],
+            'ProjectTcaOverrideScenarios' => [1, 0, 1],
+            'ThirdPartyTcaScenarios' => [0, 0, 1],
+        ];
+        $configurations = ['ignoring-indirect', 'ignoring-indirect-without-extension', 'reporting-indirect'];
+        foreach ($expectations as $scenarios => $expectedDeprecations) {
+            foreach ($configurations as $index => $configuration) {
+                yield sprintf('%s with %s', $scenarios, $configuration) => [
+                    'configuration' => $configuration,
+                    'scenarios' => $scenarios,
+                    'tests' => 1,
+                    'expectedDeprecations' => $expectedDeprecations[$index],
+                ];
+            }
+        }
     }
 
     #[Test]
