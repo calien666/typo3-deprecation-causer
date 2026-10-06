@@ -105,19 +105,20 @@ with the comma-separated parameter `passThroughPaths`:
 
 ## What is covered
 
-| Project code does                                                          | Reported               |
-|----------------------------------------------------------------------------|------------------------|
-| `GeneralUtility::makeInstance()` of a deprecated class                     | yes                    |
-| `GeneralUtility::makeInstance()` of a service with a deprecated dependency | yes                    |
-| `$this->get()` of such a service in a functional test                      | yes                    |
-| `new` of a deprecated class                                                | yes, by PHPUnit itself |
-| Third-party code instantiates a deprecated class                           | no                     |
+| Project code does                                                                               | Reported               |
+|-------------------------------------------------------------------------------------------------|------------------------|
+| `GeneralUtility::makeInstance()` of a deprecated class                                          | yes                    |
+| `GeneralUtility::makeInstance()` of a service with a deprecated dependency                      | yes                    |
+| `$this->get()` of such a service in a functional test                                           | yes                    |
+| `ext_localconf.php` or `ext_tables.php` calls a deprecated API, also from the core's cache file | yes                    |
+| The extension ships an `ext_tables.php`, which TYPO3 14 deprecates                              | yes                    |
+| `new` of a deprecated class                                                                     | yes, by PHPUnit itself |
+| Third-party code instantiates a deprecated class                                                | no                     |
 
 ## Limitations
 
 - **Deprecations about configuration** are not attributed: core raises them while it processes TCA, FlexForms,
-  plugin registrations or TSconfig of the project, and while it runs `ext_localconf.php` code from its cache file.
-  No frame of the project is on the stack then.
+  plugin registrations or TSconfig of the project. No frame of the project is on the stack then.
 - **Resolution started by the core** is not attributed: when the core instantiates a project's event listener or
   middleware that needs a deprecated service, only core and container frames are on the stack.
 - The limitations of `calien/phpunit-deprecation-causer` apply as well, such as tests in separate processes.

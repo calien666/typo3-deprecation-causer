@@ -1,0 +1,19 @@
+{
+    "name": "calien-fixture/first-party-bootstrap",
+    "type": "typo3-cms-extension",
+    "description": "Fixture extension of the end-to-end tests",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "typo3/cms-core": "*",
+        "calien-fixture/third-party": "*"
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "first_party_bootstrap",
+            "version": "1.0.0",
+            "Package": {
+                "providesPackages": {}
+            }
+        }
+    }
+}
