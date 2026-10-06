@@ -1,0 +1,59 @@
+{
+    "name": "calien/typo3-deprecation-causer",
+    "description": "PHPUnit extension for TYPO3 projects: reports deprecations that project code causes through GeneralUtility::makeInstance(), dependency injection or the testing framework, while ignoreIndirectDeprecations keeps suppressing everything else.",
+    "license": "GPL-2.0-or-later",
+    "type": "library",
+    "keywords": [
+        "phpunit",
+        "phpunit-extension",
+        "deprecation",
+        "typo3",
+        "testing-framework"
+    ],
+    "authors": [
+        {
+            "name": "Markus Hofmann",
+            "email": "markus.hofmann@calien.de",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "calien/phpunit-deprecation-causer": "^11.0 || ^12.0 || ^13.0",
+        "typo3/cms-core": "^13.4 || ^14.3 || ^15.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.94",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "typo3/testing-framework": "^9.7 || ^10.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Calien\\Typo3DeprecationCauser\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Calien\\Typo3DeprecationCauser\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "vendor-dir": ".Build/vendor",
+        "bin-dir": ".Build/bin",
+        "sort-packages": true,
+        "allow-plugins": {
+            "typo3/class-alias-loader": true,
+            "typo3/cms-composer-installers": true
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "web-dir": ".Build/Web",
+            "app-dir": ".Build"
+        }
+    }
+}
