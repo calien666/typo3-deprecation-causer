@@ -34,3 +34,5 @@
     `typo3/cms-core` `^14.3 || ^15.0` and tests with `typo3/testing-framework` `^10.0`.
   * `runTests.sh -t` accepts 14 and 15; `testcore13.yml` is a dummy on `main`, its real counterpart lives on the
     branch `9`.
+* [TASK] Ignore the `var/` directory
+  * TYPO3 compiles its dependency injection container into `var/cache/code/di/` while Composer installs it.
