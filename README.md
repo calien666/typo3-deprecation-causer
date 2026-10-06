@@ -112,16 +112,35 @@ with the comma-separated parameter `passThroughPaths`:
 | `$this->get()` of such a service in a functional test                                           | yes                    |
 | `ext_localconf.php` or `ext_tables.php` calls a deprecated API, also from the core's cache file | yes                    |
 | The extension ships an `ext_tables.php`, which TYPO3 14 deprecates                              | yes                    |
+| The core migrates TCA of a table the project defines, or of a field it adds                     | yes                    |
 | `new` of a deprecated class                                                                     | yes, by PHPUnit itself |
 | Third-party code instantiates a deprecated class                                                | no                     |
+| The core migrates TCA of third-party tables and fields only                                     | no                     |
+
+The core reports all TCA migrations of an installation in one deprecation. When one of them belongs to the project,
+the whole deprecation is reported, including the migrations of third-party tables listed next to it. A field
+belongs to the project when a TCA file of the project defining or overriding its table names it; a migration of a
+table itself only when the project defines the table.
 
 ## Limitations
 
-- **Deprecations about configuration** are not attributed: core raises them while it processes TCA, FlexForms,
-  plugin registrations or TSconfig of the project. No frame of the project is on the stack then.
+- **Other deprecations about configuration** are not attributed, such as migrations of FlexForms, plugin
+  registrations or TSconfig. No frame of the project is on the stack then.
 - **Resolution started by the core** is not attributed: when the core instantiates a project's event listener or
-  middleware that needs a deprecated service, only core and container frames are on the stack.
+  middleware that needs a deprecated service, only core and container frames are on the stack. Static analysis
+  covers it, see below.
 - The limitations of `calien/phpunit-deprecation-causer` apply as well, such as tests in separate processes.
+
+## Companion: static analysis
+
+Deprecated classes injected into services the core instantiates, such as event listeners and middlewares, never
+show a frame of the project at runtime.
+[`phpstan/phpstan-deprecation-rules`](https://github.com/phpstan/phpstan-deprecation-rules) reports every use of a
+class the core marks `@deprecated`, constructor type hints and `::class` references included, before any test runs:
+
+```bash
+composer require --dev phpstan/phpstan-deprecation-rules
+```
 
 ## Development
 
