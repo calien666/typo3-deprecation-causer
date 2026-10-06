@@ -46,3 +46,10 @@
     which still loads the single files.
   * `ExtTablesMessageCauseResolver` attributes the deprecation of loading `ext_tables.php`, raised by TYPO3 14, to
     the project's `ext_tables.php`.
+* [FEATURE] Attribute TCA migrations of project tables and fields
+  * `TcaMigrationCauseResolver` reads the tables and fields from the core's TCA migration deprecation and reports it
+    when one of them belongs to the project; migrations of third-party TCA alone stay suppressed.
+  * Ownership is decided by the TCA files below the `<source>` directories: the file defining a table, or an
+    override naming both table and field.
+  * The README recommends `phpstan/phpstan-deprecation-rules` for deprecated dependencies of services the core
+    instantiates.

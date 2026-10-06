@@ -16,6 +16,8 @@
     <include>
       <directory>Extensions/first_party/Classes/</directory>
       <directory>Extensions/first_party_bootstrap/</directory>
+      <directory>Extensions/first_party_tca/</directory>
+      <directory>Extensions/first_party_tca_override/</directory>
     </include>
   </source>
 </phpunit>
