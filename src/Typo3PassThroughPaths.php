@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Calien\Typo3DeprecationCauser;
 
 use Calien\PhpUnitDeprecationCauser\PassThroughPaths;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
- * The files of TYPO3 and its testing framework that instantiate classes on behalf of their caller.
+ * The files and methods of TYPO3 and its testing framework that instantiate classes on behalf of their caller.
  */
 final class Typo3PassThroughPaths
 {
@@ -22,7 +23,7 @@ final class Typo3PassThroughPaths
             '/symfony/dependency-injection/',
             '/var/cache/code/di/',
             // `$this->get()` of functional tests, so a test fetching a service counts as its caller.
-            '/testing-framework/Classes/Core/Functional/FunctionalTestCase.php',
+            FunctionalTestCase::class . '::get',
         ]);
     }
 }
