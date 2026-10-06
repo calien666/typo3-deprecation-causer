@@ -56,6 +56,7 @@ functional test instance on SQLite with two fixture extensions:
 | :------------------------- | :--------------------------------------------------------------------- |
 | `Extensions/first_party/`  | Project code, the only directory in `<source>`                         |
 | `Extensions/third_party/`  | A deprecated service and code instantiating it, outside of `<source>`  |
+| `Extensions/first_party_bootstrap/` | Project `ext_localconf.php` and `ext_tables.php` calling a deprecated API |
 
 | Configuration                             | Purpose                                                          |
 | :---------------------------------------- | :--------------------------------------------------------------- |
@@ -64,3 +65,5 @@ functional test instance on SQLite with two fixture extensions:
 | `reporting-indirect.xml`                  | Proves nothing is reported twice when PHPUnit reports everything |
 
 The fixture extensions are autoloaded through `sbuerk/fixture-packages` and loaded into the test instance by path.
+`DeprecationScenarios` runs one test at a time; `BootstrapScenarios` and `CachedBootstrapScenarios` run as whole
+classes, the latter to boot its second test from the cache files the first one created.

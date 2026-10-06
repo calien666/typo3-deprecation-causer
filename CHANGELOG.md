@@ -39,3 +39,9 @@
   * The testing framework's `FunctionalTestCase` was pass-through code as a whole, so a deprecation it triggered
     itself, for instance in `setUp()`, was attributed to the test case class calling `parent::setUp()`. Only
     `$this->get()` passes through now.
+* [FEATURE] Attribute deprecations caused by `ext_localconf.php` and `ext_tables.php`
+  * `CachedBootstrapFileMapper` maps the cache files the core concatenates from those files back to the file of the
+    extension, so a deprecated API called there is reported in every test, not only in the first test of a class,
+    which still loads the single files.
+  * `ExtTablesMessageCauseResolver` attributes the deprecation of loading `ext_tables.php`, raised by TYPO3 14, to
+    the project's `ext_tables.php`.

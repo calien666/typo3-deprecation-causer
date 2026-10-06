@@ -15,6 +15,7 @@
   <source ignoreIndirectDeprecations="false">
     <include>
       <directory>Extensions/first_party/Classes/</directory>
+      <directory>Extensions/first_party_bootstrap/</directory>
     </include>
   </source>
   <extensions>
