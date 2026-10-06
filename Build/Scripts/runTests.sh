@@ -68,9 +68,6 @@ getCoreConstraint() {
         14)
             echo -n "^14.3"
             ;;
-        15)
-            echo -n "^15.0"
-            ;;
     esac
 }
 
@@ -111,14 +108,13 @@ Options:
             - 8.2 (default): use PHP 8.2
             - 8.3: use PHP 8.3
             - 8.4: use PHP 8.4
-            - 8.5: use PHP 8.5, required by TYPO3 15
+            - 8.5: use PHP 8.5
 
-    -t <13|14|15>
+    -t <13|14>
         Only with -s composerUpdate|composerUpdateMin
         Specifies the TYPO3 core major to install
             - 13 (default): TYPO3 13.4
             - 14: TYPO3 14.3
-            - 15: TYPO3 15, the development version of the core
 
     -U <11|12|13>
         Only with -s composerUpdate|composerUpdateMin
@@ -161,8 +157,8 @@ Examples:
     ./Build/Scripts/runTests.sh -s unit
     ./Build/Scripts/runTests.sh -s functional
 
-    # Run the functional tests using PHP 8.5 against TYPO3 15 and PHPUnit 13
-    ./Build/Scripts/runTests.sh -p 8.5 -t 15 -U 13 -s composerUpdate
+    # Run the functional tests using PHP 8.5 against TYPO3 14 and PHPUnit 13
+    ./Build/Scripts/runTests.sh -p 8.5 -t 14 -U 13 -s composerUpdate
     ./Build/Scripts/runTests.sh -p 8.5 -s functional
 
     # Run a single test file
@@ -227,7 +223,7 @@ while getopts ":b:s:p:t:U:o:xy:nhu" OPT; do
             ;;
         t)
             CORE_VERSION=${OPTARG}
-            if ! [[ ${CORE_VERSION} =~ ^(13|14|15)$ ]]; then
+            if ! [[ ${CORE_VERSION} =~ ^(13|14)$ ]]; then
                 INVALID_OPTIONS+=("${OPTARG}")
             fi
             ;;

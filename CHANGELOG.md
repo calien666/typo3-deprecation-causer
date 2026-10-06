@@ -29,3 +29,7 @@
   * `README.md` covers the problem, the compatibility of both lines, installation, configuration, what is covered
     and the known limitations.
   * `DEVELOPERS.md` covers the branches, the runner, the test matrix and the end-to-end fixtures.
+* [TASK] Restrict the 9.x line to TYPO3 13 and 14
+  * Like `typo3/testing-framework` 9, the 9.x line supports TYPO3 13.4 and 14.3; it requires
+    `typo3/cms-core` `^13.4 || ^14.3` and tests with `typo3/testing-framework` `^9.7`.
+  * `runTests.sh -t` accepts 13 and 14; the workflow for TYPO3 15 is removed from the branch.

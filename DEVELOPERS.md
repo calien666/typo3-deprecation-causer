@@ -16,7 +16,7 @@ Select the TYPO3 major with `-t` and the PHPUnit major with `-U`, with a PHP ver
 
 ```shell
 Build/Scripts/runTests.sh -p 8.2 -t 13 -U 11 -s composerUpdate
-Build/Scripts/runTests.sh -p 8.5 -t 15 -U 13 -s composerUpdate
+Build/Scripts/runTests.sh -p 8.5 -t 14 -U 13 -s composerUpdate
 ```
 
 `-s composerUpdateMin` installs the lowest supported releases instead. `composer.json` keeps its spanning
