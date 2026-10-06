@@ -25,3 +25,7 @@
   * One workflow per TYPO3 major, `testcore13.yml`, `testcore14.yml` and `testcore15.yml`, runs code quality and the
     unit and functional tests with PHPUnit 11, 12 and 13 across the PHP range of that major, plus the lowest
     dependencies, on every pull request.
+* [DOCS] Document usage, versions and development
+  * `README.md` covers the problem, the compatibility of both lines, installation, configuration, what is covered
+    and the known limitations.
+  * `DEVELOPERS.md` covers the branches, the runner, the test matrix and the end-to-end fixtures.
