@@ -120,9 +120,6 @@ with the comma-separated parameter `passThroughPaths`:
   No frame of the project is on the stack then.
 - **Resolution started by the core** is not attributed: when the core instantiates a project's event listener or
   middleware that needs a deprecated service, only core and container frames are on the stack.
-- `FunctionalTestCase` counts as pass-through code because of `$this->get()`. A deprecation the testing framework
-  itself triggers directly in `setUp()` would therefore be attributed to the test case class that called
-  `parent::setUp()`.
 - The limitations of `calien/phpunit-deprecation-causer` apply as well, such as tests in separate processes.
 
 ## Development

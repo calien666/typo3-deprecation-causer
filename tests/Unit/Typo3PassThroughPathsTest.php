@@ -10,6 +10,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 #[CoversClass(Typo3PassThroughPaths::class)]
 final class Typo3PassThroughPathsTest extends TestCase
@@ -49,9 +50,9 @@ final class Typo3PassThroughPathsTest extends TestCase
             'file' => '/app/.Build/Web/typo3temp/var/tests/functional-1a2b3c/typo3temp/var/cache/code/di/DependencyInjectionContainer_1a2b3c.php',
             'expected' => true,
         ];
-        yield 'container access of the testing framework' => [
+        yield 'functional test case of the testing framework, outside of get()' => [
             'file' => '/var/www/html/vendor/typo3/testing-framework/Classes/Core/Functional/FunctionalTestCase.php',
-            'expected' => true,
+            'expected' => false,
         ];
         yield 'other core class' => [
             'file' => '/var/www/html/vendor/typo3/cms-core/Classes/DataHandling/DataHandler.php',
@@ -65,5 +66,14 @@ final class Typo3PassThroughPathsTest extends TestCase
             'file' => '/var/www/html/packages/site/Classes/Service/ProjectService.php',
             'expected' => false,
         ];
+    }
+
+    #[Test]
+    public function matchesContainerAccessOfFunctionalTests(): void
+    {
+        $subject = Typo3PassThroughPaths::create();
+
+        self::assertTrue($subject->matchesMethod(FunctionalTestCase::class, 'get'));
+        self::assertFalse($subject->matchesMethod(FunctionalTestCase::class, 'setUp'));
     }
 }
