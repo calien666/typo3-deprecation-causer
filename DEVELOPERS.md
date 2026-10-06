@@ -15,7 +15,7 @@ backported to `9` in a pull request of its own.
 Select the TYPO3 major with `-t` and the PHPUnit major with `-U`, with a PHP version both support:
 
 ```shell
-Build/Scripts/runTests.sh -p 8.2 -t 13 -U 11 -s composerUpdate
+Build/Scripts/runTests.sh -p 8.2 -t 14 -U 11 -s composerUpdate
 Build/Scripts/runTests.sh -p 8.5 -t 15 -U 13 -s composerUpdate
 ```
 
