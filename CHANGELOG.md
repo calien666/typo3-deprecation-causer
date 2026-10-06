@@ -21,3 +21,7 @@
     supports TYPO3 13.4, 14.3 and 15.
   * End-to-end tests run every scenario in a TYPO3 functional test instance with fixture extensions loaded through
     `sbuerk/fixture-packages`.
+* [TASK] Run the test matrix in GitHub Actions
+  * One workflow per TYPO3 major, `testcore13.yml`, `testcore14.yml` and `testcore15.yml`, runs code quality and the
+    unit and functional tests with PHPUnit 11, 12 and 13 across the PHP range of that major, plus the lowest
+    dependencies, on every pull request.
