@@ -11,6 +11,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use TYPO3\CMS\Core\Configuration\Extension\ExtTablesFactory;
+use TYPO3\CMS\Core\Information\Typo3Version;
 
 /**
  * Runs each scenario of {@see DeprecationScenarios} in its own PHPUnit process with one of the configurations in
@@ -26,7 +28,7 @@ final class ExtensionTest extends TestCase
         string $scenario,
         int $expectedDeprecations,
     ): void {
-        [$exitCode, $output] = $this->runScenario($configuration, $scenario);
+        [$exitCode, $output] = $this->runScenario($configuration, sprintf('/::%s$/', $scenario));
 
         self::assertMatchesRegularExpression('/^OK \(1 test|^Tests: 1,/m', $output, $output);
         self::assertSame($expectedDeprecations, $this->reportedDeprecations($output), $output);
@@ -55,10 +57,71 @@ final class ExtensionTest extends TestCase
         }
     }
 
+    /**
+     * TYPO3 15 no longer loads `ext_tables.php`; TYPO3 14 loads it and deprecates loading it, once while loading the
+     * single files and once while concatenating them into the cache file; TYPO3 13 loads it without deprecation.
+     */
+    #[Test]
+    #[DataProvider('bootstrapScenarioProvider')]
+    public function reportsDeprecationsCausedByProjectBootstrapFiles(
+        string $configuration,
+        string $scenarios,
+        int $tests,
+        int $expectedDeprecations,
+    ): void {
+        [$exitCode, $output] = $this->runScenario($configuration, sprintf('/\\\\%s::/', $scenarios));
+
+        self::assertMatchesRegularExpression(sprintf('/^OK \\(%1$d tests?|^Tests: %1$d,/m', $tests), $output, $output);
+        self::assertSame($expectedDeprecations, $this->reportedDeprecations($output), $output);
+        self::assertSame($expectedDeprecations > 0 ? 1 : 0, $exitCode, $output);
+    }
+
+    public static function bootstrapScenarioProvider(): Generator
+    {
+        $extTables = class_exists(ExtTablesFactory::class) ? 1 : 0;
+        $extTablesDeprecated = $extTables === 1 && (new Typo3Version())->getMajorVersion() >= 14 ? 1 : 0;
+        yield 'bootstrap files with ignoring-indirect' => [
+            'configuration' => 'ignoring-indirect',
+            'scenarios' => 'BootstrapScenarios',
+            'tests' => 1,
+            'expectedDeprecations' => 1 + $extTables + 2 * $extTablesDeprecated,
+        ];
+        yield 'bootstrap files with ignoring-indirect-without-extension' => [
+            'configuration' => 'ignoring-indirect-without-extension',
+            'scenarios' => 'BootstrapScenarios',
+            'tests' => 1,
+            'expectedDeprecations' => 1 + $extTables,
+        ];
+        yield 'bootstrap files with reporting-indirect' => [
+            'configuration' => 'reporting-indirect',
+            'scenarios' => 'BootstrapScenarios',
+            'tests' => 1,
+            'expectedDeprecations' => 1 + $extTables + 2 * $extTablesDeprecated,
+        ];
+        yield 'cached bootstrap files with ignoring-indirect' => [
+            'configuration' => 'ignoring-indirect',
+            'scenarios' => 'CachedBootstrapScenarios',
+            'tests' => 2,
+            'expectedDeprecations' => 1 + $extTables,
+        ];
+        yield 'cached bootstrap files with ignoring-indirect-without-extension' => [
+            'configuration' => 'ignoring-indirect-without-extension',
+            'scenarios' => 'CachedBootstrapScenarios',
+            'tests' => 2,
+            'expectedDeprecations' => 0,
+        ];
+        yield 'cached bootstrap files with reporting-indirect' => [
+            'configuration' => 'reporting-indirect',
+            'scenarios' => 'CachedBootstrapScenarios',
+            'tests' => 2,
+            'expectedDeprecations' => 1 + $extTables,
+        ];
+    }
+
     #[Test]
     public function expectedDeprecationCausedByProjectCodeDoesNotFailTheRun(): void
     {
-        [$exitCode, $output] = $this->runScenario('ignoring-indirect', 'expectedDeprecationThroughMakeInstance');
+        [$exitCode, $output] = $this->runScenario('ignoring-indirect', '/::expectedDeprecationThroughMakeInstance$/');
 
         self::assertSame(0, $exitCode, $output);
         self::assertSame(0, $this->reportedDeprecations($output), $output);
@@ -67,7 +130,7 @@ final class ExtensionTest extends TestCase
     /**
      * @return array{int, string}
      */
-    private function runScenario(string $configuration, string $scenario): array
+    private function runScenario(string $configuration, string $filter): array
     {
         $command = [
             PHP_BINARY,
@@ -75,7 +138,7 @@ final class ExtensionTest extends TestCase
             '--configuration',
             __DIR__ . '/Fixtures/' . $configuration . '.xml',
             '--filter',
-            sprintf('/::%s$/', $scenario),
+            $filter,
         ];
         $process = proc_open($command, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
         self::assertIsResource($process);
