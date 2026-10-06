@@ -36,3 +36,7 @@
     branch `9`.
 * [TASK] Ignore the `var/` directory
   * TYPO3 compiles its dependency injection container into `var/cache/code/di/` while Composer installs it.
+* [BUGFIX] Treat only `FunctionalTestCase::get()` as pass-through code
+  * The testing framework's `FunctionalTestCase` was pass-through code as a whole, so a deprecation it triggered
+    itself, for instance in `setUp()`, was attributed to the test case class calling `parent::setUp()`. Only
+    `$this->get()` passes through now.
