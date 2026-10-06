@@ -62,9 +62,6 @@ getPhpImageVersion() {
 
 getCoreConstraint() {
     case ${1} in
-        13)
-            echo -n "^13.4"
-            ;;
         14)
             echo -n "^14.3"
             ;;
@@ -113,11 +110,10 @@ Options:
             - 8.4: use PHP 8.4
             - 8.5: use PHP 8.5, required by TYPO3 15
 
-    -t <13|14|15>
+    -t <14|15>
         Only with -s composerUpdate|composerUpdateMin
         Specifies the TYPO3 core major to install
-            - 13 (default): TYPO3 13.4
-            - 14: TYPO3 14.3
+            - 14 (default): TYPO3 14.3
             - 15: TYPO3 15, the development version of the core
 
     -U <11|12|13>
@@ -156,7 +152,7 @@ Options:
         Show this help.
 
 Examples:
-    # Run unit and functional tests using PHP 8.2 against TYPO3 13 and PHPUnit 11
+    # Run unit and functional tests using PHP 8.2 against TYPO3 14 and PHPUnit 11
     ./Build/Scripts/runTests.sh -s composerUpdate
     ./Build/Scripts/runTests.sh -s unit
     ./Build/Scripts/runTests.sh -s functional
@@ -186,7 +182,7 @@ ROOT_DIR="${PWD}"
 # Default variables
 TEST_SUITE="unit"
 PHP_VERSION="8.2"
-CORE_VERSION="13"
+CORE_VERSION="14"
 PHPUNIT_VERSION="11"
 PHP_XDEBUG_ON=0
 PHP_XDEBUG_PORT=9003
@@ -227,7 +223,7 @@ while getopts ":b:s:p:t:U:o:xy:nhu" OPT; do
             ;;
         t)
             CORE_VERSION=${OPTARG}
-            if ! [[ ${CORE_VERSION} =~ ^(13|14|15)$ ]]; then
+            if ! [[ ${CORE_VERSION} =~ ^(14|15)$ ]]; then
                 INVALID_OPTIONS+=("${OPTARG}")
             fi
             ;;

@@ -29,3 +29,8 @@
   * `README.md` covers the problem, the compatibility of both lines, installation, configuration, what is covered
     and the known limitations.
   * `DEVELOPERS.md` covers the branches, the runner, the test matrix and the end-to-end fixtures.
+* [TASK] Restrict the 10.x line to TYPO3 14 and 15
+  * Like `typo3/testing-framework` 10, the 10.x line on `main` supports TYPO3 14.3 and 15; it requires
+    `typo3/cms-core` `^14.3 || ^15.0` and tests with `typo3/testing-framework` `^10.0`.
+  * `runTests.sh -t` accepts 14 and 15; `testcore13.yml` is a dummy on `main`, its real counterpart lives on the
+    branch `9`.
