@@ -11,8 +11,8 @@ use RecursiveIteratorIterator;
 use SplFileInfo;
 
 /**
- * The `Configuration/TCA/` files below the `<source>` directories of PHPUnit, to tell whether a table or field the
- * core migrated belongs to the project.
+ * The TCA files below the `<source>` directories of PHPUnit, to tell whether a table or field the core migrated
+ * belongs to the project: `Configuration/TCA/` for the TCA, `Configuration/SiteConfiguration/` for the site TCA.
  */
 final class FirstPartyTcaFiles
 {
@@ -21,7 +21,13 @@ final class FirstPartyTcaFiles
      */
     private ?array $files = null;
 
-    public function __construct(private readonly FirstPartyCode $firstPartyCode) {}
+    /**
+     * @param 'TCA'|'SiteConfiguration' $directory
+     */
+    public function __construct(
+        private readonly FirstPartyCode $firstPartyCode,
+        private readonly string $directory = 'TCA',
+    ) {}
 
     /**
      * A field belongs to the project when a first-party file defining its table, or overriding it, names the field.
@@ -39,9 +45,14 @@ final class FirstPartyTcaFiles
         return null;
     }
 
+    private function defines(string $file, string $table): bool
+    {
+        return basename($file) === $table . '.php' && basename(dirname($file)) === $this->directory;
+    }
+
     private function owns(string $file, string $table, ?string $field): bool
     {
-        $definesTable = basename($file) === $table . '.php' && basename(dirname($file)) === 'TCA';
+        $definesTable = $this->defines($file, $table);
         if ($field === null) {
             return $definesTable;
         }
@@ -83,7 +94,7 @@ final class FirstPartyTcaFiles
 
     private function isTcaFile(string $file): bool
     {
-        return preg_match('#/Configuration/TCA/(Overrides/)?[^/]+\.php$#', $file) === 1
+        return preg_match('#/Configuration/' . $this->directory . '/(Overrides/)?[^/]+\.php$#', $file) === 1
             && $this->firstPartyCode->includes($file);
     }
 }

@@ -53,3 +53,9 @@
     override naming both table and field.
   * The README recommends `phpstan/phpstan-deprecation-rules` for deprecated dependencies of services the core
     instantiates.
+* [BUGFIX] Keep site TCA migrations of third-party fields suppressed
+  * The core migrates the site TCA whenever it is read, and a test reading it was taken as the cause of EXT:solr's
+    migrations. `TcaMigrationCauseResolver` now recognises that deprecation as well and attributes it by the files
+    below `Configuration/SiteConfiguration/`; a migration of third-party site fields stays suppressed on PHPUnit 13.1
+    and later, also when a test reads the site TCA.
+  * The resolvers implement `CauseResolver` of `calien/phpunit-deprecation-causer`, which answers before the stack.
