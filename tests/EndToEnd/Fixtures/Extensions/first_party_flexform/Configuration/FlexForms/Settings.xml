@@ -1,0 +1,20 @@
+<T3DataStructure>
+  <sheets>
+    <sDEF>
+      <ROOT>
+        <sheetTitle>General</sheetTitle>
+        <type>array</type>
+        <el>
+          <project_file_date>
+            <label>Project file date</label>
+            <config>
+              <!-- Migrated to type "datetime" with a deprecation on every core. -->
+              <type>input</type>
+              <renderType>inputDateTime</renderType>
+            </config>
+          </project_file_date>
+        </el>
+      </ROOT>
+    </sDEF>
+  </sheets>
+</T3DataStructure>

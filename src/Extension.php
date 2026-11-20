@@ -14,8 +14,8 @@ use PHPUnit\TextUI\Configuration\Configuration;
 
 /**
  * Reports deprecations that project code causes through `GeneralUtility::makeInstance()`, dependency injection,
- * `$this->get()` of a functional test or its `ext_localconf.php` and `ext_tables.php`, and migrations of its TCA and
- * site TCA, although `<source ignoreIndirectDeprecations="true">` is set.
+ * `$this->get()` of a functional test or its `ext_localconf.php` and `ext_tables.php`, and migrations of its TCA,
+ * site TCA and FlexForms, although `<source ignoreIndirectDeprecations="true">` is set.
  *
  * Register it in the `<extensions>` section of the PHPUnit configuration. The optional, comma-separated parameter
  * `passThroughPaths` adds paths of other code that instantiates on behalf of its caller.
@@ -25,6 +25,7 @@ final class Extension implements PhpUnitExtension
     public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
     {
         $firstPartyCode = FirstPartyCode::fromConfiguration($configuration);
+        $firstPartyTcaFiles = new FirstPartyTcaFiles($firstPartyCode);
         (new DeprecationCauserRegistrar())->register(
             $configuration,
             $facade,
@@ -33,9 +34,10 @@ final class Extension implements PhpUnitExtension
             [
                 new ExtTablesMessageCauseResolver($firstPartyCode),
                 new TcaMigrationCauseResolver(
-                    new FirstPartyTcaFiles($firstPartyCode),
+                    $firstPartyTcaFiles,
                     new FirstPartyTcaFiles($firstPartyCode, 'SiteConfiguration'),
                 ),
+                new FlexFormMigrationCauseResolver($firstPartyCode, $firstPartyTcaFiles),
             ],
         );
     }
