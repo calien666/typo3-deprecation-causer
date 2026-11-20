@@ -61,6 +61,7 @@ final class ExtensionTest extends TestCase
     #[Test]
     #[DataProvider('bootstrapScenarioProvider')]
     #[DataProvider('tcaScenarioProvider')]
+    #[DataProvider('flexFormScenarioProvider')]
     #[DataProvider('siteTcaScenarioProvider')]
     public function reportsDeprecationsCausedByProjectConfiguration(
         string $configuration,
@@ -145,6 +146,31 @@ final class ExtensionTest extends TestCase
     }
 
     /**
+     * The core raises one deprecation per FlexForm field it migrates while it builds the TCA schema. The project's
+     * deprecations have to be reported, while those of the third-party FlexForm of the same table and field stay
+     * suppressed.
+     */
+    public static function flexFormScenarioProvider(): Generator
+    {
+        $expectations = [
+            'ProjectFlexFormScenarios' => [2, 0, 2],
+            'ProjectFlexFormOverrideScenarios' => [2, 0, 3],
+            'ThirdPartyFlexFormScenarios' => [0, 0, 1],
+        ];
+        $configurations = ['ignoring-indirect', 'ignoring-indirect-without-extension', 'reporting-indirect'];
+        foreach ($expectations as $scenarios => $expectedDeprecations) {
+            foreach ($configurations as $index => $configuration) {
+                yield sprintf('%s with %s', $scenarios, $configuration) => [
+                    'configuration' => $configuration,
+                    'scenarios' => $scenarios,
+                    'tests' => 1,
+                    'expectedDeprecations' => $expectedDeprecations[$index],
+                ];
+            }
+        }
+    }
+
+    /**
      * The core migrates the site TCA each time it is read and reports all its migrations in one deprecation. A test
      * reading the site TCA itself is the caller PHPUnit classifies the deprecation by; only issue trigger resolvers,
      * from PHPUnit 13.1 on, can keep it suppressed then.
@@ -168,6 +194,20 @@ final class ExtensionTest extends TestCase
                 ];
             }
         }
+    }
+
+    /**
+     * The project's FlexForms and the third-party one belong to the same table and field, so the count alone does not
+     * tell which of them is reported.
+     */
+    #[Test]
+    public function reportsFlexFormMigrationsOfProjectRecordTypesOnly(): void
+    {
+        [, $output] = $this->runScenario('ignoring-indirect', '/\\\\ProjectFlexFormOverrideScenarios::/');
+
+        self::assertStringContainsString('flex form definition "project_override_date"', $output);
+        self::assertStringContainsString('flex form definition "project_override_inline_date"', $output);
+        self::assertStringNotContainsString('flex form definition "vendor_date"', $output);
     }
 
     #[Test]
