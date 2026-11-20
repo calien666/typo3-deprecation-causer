@@ -58,3 +58,7 @@
     below `Configuration/SiteConfiguration/`; a migration of third-party site fields stays suppressed on PHPUnit 13.1
     and later, also when a test reads the site TCA.
   * The resolvers implement `CauseResolver` of `calien/phpunit-deprecation-causer`, which answers before the stack.
+* [FEATURE] Attribute FlexForm migrations to the project's TCA
+  * `FlexFormMigrationCauseResolver` reads the data structure identifier the core parses from the stack and reports
+    the migration of a FlexForm field when the project's TCA configures the data structure, by a `FILE:` reference
+    to a first-party file or inline. Third-party FlexForms of the same field stay suppressed.

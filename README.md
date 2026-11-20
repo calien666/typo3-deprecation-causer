@@ -114,10 +114,12 @@ with the comma-separated parameter `passThroughPaths`:
 | The extension ships an `ext_tables.php`, which TYPO3 14 deprecates                              | yes                    |
 | The core migrates TCA of a table the project defines, or of a field it adds                     | yes                    |
 | The core migrates the site TCA of a field the project adds                                      | yes                    |
+| The core migrates a FlexForm the project configures in its TCA, from a file or inline           | yes                    |
 | `new` of a deprecated class                                                                     | yes, by PHPUnit itself |
 | Third-party code instantiates a deprecated class                                                | no                     |
 | The core migrates TCA of third-party tables and fields only                                     | no                     |
 | The core migrates site TCA of third-party fields only                                           | no, see below          |
+| The core migrates a third-party FlexForm                                                        | no                     |
 
 The core reports all TCA migrations of an installation in one deprecation. When one of them belongs to the project,
 the whole deprecation is reported, including the migrations of third-party tables listed next to it. A field
@@ -127,10 +129,17 @@ attributed the same way by the files below `Configuration/SiteConfiguration/`. A
 does not make a third-party migration the project's; PHPUnit 11 and 12 report it nevertheless, as they classify the
 test as its caller before the extension sees the deprecation.
 
+The core migrates FlexForm fields one deprecation at a time, when it parses a data structure. Such a deprecation
+belongs to the project when its TCA configures the data structure of that table, field and record type: by a `FILE:`
+reference to a file below the `<source>` directories, or inline. A third-party FlexForm of the same field stays
+suppressed.
+
 ## Limitations
 
-- **Other deprecations about configuration** are not attributed, such as migrations of FlexForms, plugin
-  registrations or TSconfig. No frame of the project is on the stack then.
+- **Other deprecations about configuration** are not attributed, such as plugin registrations or TSconfig. No frame
+  of the project is on the stack then.
+- **FlexForm data structures from an event listener** are attributed by the data structure the TCA configures, not by
+  the one a `BeforeFlexFormDataStructureParsedEvent` listener provides instead.
 - **Resolution started by the core** is not attributed: when the core instantiates a project's event listener or
   middleware that needs a deprecated service, only core and container frames are on the stack. Static analysis
   covers it, see below.

@@ -45,6 +45,23 @@ final class FirstPartyTcaFiles
         return null;
     }
 
+    /**
+     * The first-party file defining a table, or overriding it, that contains a text, such as a part of an inline
+     * FlexForm data structure.
+     *
+     * @return non-empty-string|null
+     */
+    public function ownerOfText(string $table, string $text): ?string
+    {
+        foreach ($this->files() as $file) {
+            $content = (string)file_get_contents($file);
+            if (($this->defines($file, $table) || $this->names($content, $table)) && str_contains($content, $text)) {
+                return $file;
+            }
+        }
+        return null;
+    }
+
     private function defines(string $file, string $table): bool
     {
         return basename($file) === $table . '.php' && basename(dirname($file)) === $this->directory;
