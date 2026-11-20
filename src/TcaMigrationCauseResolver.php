@@ -4,25 +4,38 @@ declare(strict_types=1);
 
 namespace Calien\Typo3DeprecationCauser;
 
-use Calien\PhpUnitDeprecationCauser\MessageCauseResolver;
+use Calien\PhpUnitDeprecationCauser\Cause;
+use Calien\PhpUnitDeprecationCauser\CauseResolver;
 
 /**
- * Attributes the deprecation of the core's TCA migration to the project when it migrated a table or field the
- * project defines. The deprecation lists the migrations of all extensions; it stays suppressed when none of them
- * belongs to the project.
+ * Attributes the deprecation of the core's TCA migration, and of its site TCA migration, to the project when it
+ * migrated a table or field the project defines. The deprecation lists the migrations of all extensions; it stays
+ * suppressed when none of them belongs to the project, also when a test started the migration of the site TCA.
  */
-final readonly class TcaMigrationCauseResolver implements MessageCauseResolver
+final readonly class TcaMigrationCauseResolver implements CauseResolver
 {
-    public function __construct(private FirstPartyTcaFiles $firstPartyTcaFiles) {}
+    public function __construct(
+        private FirstPartyTcaFiles $firstPartyTcaFiles,
+        private FirstPartyTcaFiles $firstPartySiteTcaFiles,
+    ) {}
 
-    public function causingFile(string $message): ?string
+    public function cause(array $trace, string $message): ?Cause
     {
-        foreach (TcaMigrationMessage::migratedItems($message) as [$table, $field]) {
-            $owner = $this->firstPartyTcaFiles->owner($table, $field);
+        $files = $this->firstPartyTcaFiles;
+        $items = TcaMigrationMessage::migratedItems($message);
+        if ($items === []) {
+            $files = $this->firstPartySiteTcaFiles;
+            $items = TcaMigrationMessage::migratedSiteItems($message);
+        }
+        if ($items === []) {
+            return null;
+        }
+        foreach ($items as [$table, $field]) {
+            $owner = $files->owner($table, $field);
             if ($owner !== null) {
-                return $owner;
+                return Cause::inFile($owner);
             }
         }
-        return null;
+        return Cause::thirdParty();
     }
 }
