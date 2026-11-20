@@ -14,8 +14,8 @@ use PHPUnit\TextUI\Configuration\Configuration;
 
 /**
  * Reports deprecations that project code causes through `GeneralUtility::makeInstance()`, dependency injection,
- * `$this->get()` of a functional test or its `ext_localconf.php` and `ext_tables.php`, and TCA migrations of its
- * tables and fields, although `<source ignoreIndirectDeprecations="true">` is set.
+ * `$this->get()` of a functional test or its `ext_localconf.php` and `ext_tables.php`, and migrations of its TCA and
+ * site TCA, although `<source ignoreIndirectDeprecations="true">` is set.
  *
  * Register it in the `<extensions>` section of the PHPUnit configuration. The optional, comma-separated parameter
  * `passThroughPaths` adds paths of other code that instantiates on behalf of its caller.
@@ -32,7 +32,10 @@ final class Extension implements PhpUnitExtension
             [new CachedBootstrapFileMapper()],
             [
                 new ExtTablesMessageCauseResolver($firstPartyCode),
-                new TcaMigrationCauseResolver(new FirstPartyTcaFiles($firstPartyCode)),
+                new TcaMigrationCauseResolver(
+                    new FirstPartyTcaFiles($firstPartyCode),
+                    new FirstPartyTcaFiles($firstPartyCode, 'SiteConfiguration'),
+                ),
             ],
         );
     }

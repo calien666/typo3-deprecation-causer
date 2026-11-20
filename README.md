@@ -113,14 +113,19 @@ with the comma-separated parameter `passThroughPaths`:
 | `ext_localconf.php` or `ext_tables.php` calls a deprecated API, also from the core's cache file | yes                    |
 | The extension ships an `ext_tables.php`, which TYPO3 14 deprecates                              | yes                    |
 | The core migrates TCA of a table the project defines, or of a field it adds                     | yes                    |
+| The core migrates the site TCA of a field the project adds                                      | yes                    |
 | `new` of a deprecated class                                                                     | yes, by PHPUnit itself |
 | Third-party code instantiates a deprecated class                                                | no                     |
 | The core migrates TCA of third-party tables and fields only                                     | no                     |
+| The core migrates site TCA of third-party fields only                                           | no, see below          |
 
 The core reports all TCA migrations of an installation in one deprecation. When one of them belongs to the project,
 the whole deprecation is reported, including the migrations of third-party tables listed next to it. A field
 belongs to the project when a TCA file of the project defining or overriding its table names it; a migration of a
-table itself only when the project defines the table.
+table itself only when the project defines the table. The site TCA, which the core migrates whenever it is read, is
+attributed the same way by the files below `Configuration/SiteConfiguration/`. A test reading the site TCA itself
+does not make a third-party migration the project's; PHPUnit 11 and 12 report it nevertheless, as they classify the
+test as its caller before the extension sees the deprecation.
 
 ## Limitations
 

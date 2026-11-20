@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Runner\IssueTriggerResolver\Resolver;
 use TYPO3\CMS\Core\Configuration\Extension\ExtTablesFactory;
 use TYPO3\CMS\Core\Information\Typo3Version;
 
@@ -60,6 +61,7 @@ final class ExtensionTest extends TestCase
     #[Test]
     #[DataProvider('bootstrapScenarioProvider')]
     #[DataProvider('tcaScenarioProvider')]
+    #[DataProvider('siteTcaScenarioProvider')]
     public function reportsDeprecationsCausedByProjectConfiguration(
         string $configuration,
         string $scenarios,
@@ -128,6 +130,32 @@ final class ExtensionTest extends TestCase
             'ProjectTcaScenarios' => [1, 0, 1],
             'ProjectTcaOverrideScenarios' => [1, 0, 1],
             'ThirdPartyTcaScenarios' => [0, 0, 1],
+        ];
+        $configurations = ['ignoring-indirect', 'ignoring-indirect-without-extension', 'reporting-indirect'];
+        foreach ($expectations as $scenarios => $expectedDeprecations) {
+            foreach ($configurations as $index => $configuration) {
+                yield sprintf('%s with %s', $scenarios, $configuration) => [
+                    'configuration' => $configuration,
+                    'scenarios' => $scenarios,
+                    'tests' => 1,
+                    'expectedDeprecations' => $expectedDeprecations[$index],
+                ];
+            }
+        }
+    }
+
+    /**
+     * The core migrates the site TCA each time it is read and reports all its migrations in one deprecation. A test
+     * reading the site TCA itself is the caller PHPUnit classifies the deprecation by; only issue trigger resolvers,
+     * from PHPUnit 13.1 on, can keep it suppressed then.
+     */
+    public static function siteTcaScenarioProvider(): Generator
+    {
+        $issueTriggerResolvers = interface_exists(Resolver::class);
+        $expectations = [
+            'ProjectSiteTcaScenarios' => [1, 0, 1],
+            'ThirdPartySiteTcaScenarios' => [0, 0, 1],
+            'ThirdPartySiteTcaReadByTestScenarios' => [$issueTriggerResolvers ? 0 : 1, 1, 1],
         ];
         $configurations = ['ignoring-indirect', 'ignoring-indirect-without-extension', 'reporting-indirect'];
         foreach ($expectations as $scenarios => $expectedDeprecations) {
