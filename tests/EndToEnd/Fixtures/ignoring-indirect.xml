@@ -18,6 +18,7 @@
       <directory>Extensions/first_party_bootstrap/</directory>
       <directory>Extensions/first_party_tca/</directory>
       <directory>Extensions/first_party_tca_override/</directory>
+      <directory>Extensions/first_party_site/</directory>
     </include>
   </source>
   <extensions>

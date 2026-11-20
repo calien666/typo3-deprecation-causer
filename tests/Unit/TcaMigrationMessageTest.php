@@ -14,6 +14,9 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(TcaMigrationMessage::class)]
 final class TcaMigrationMessageTest extends TestCase
 {
+    private const SITE_CONTEXT = 'Automatic TCA migration done during bootstrap of Site TCA Configuration. Please'
+        . ' adapt TCA accordingly, these migrations will be removed. Please adapt these areas:';
+
     /**
      * @param list<array{string, string|null}> $expected
      */
@@ -65,6 +68,37 @@ final class TcaMigrationMessageTest extends TestCase
         ];
         yield 'other deprecation' => [
             'message' => "The TCA field 'starttime' of table 'tx_acme_item' is used somewhere.",
+            'expected' => [],
+        ];
+        yield 'site TCA migration' => [
+            'message' => self::SITE_CONTEXT . "\nThe TCA field 'solr_scheme_read' of table 'site' uses the legacy way.",
+            'expected' => [],
+        ];
+    }
+
+    /**
+     * @param list<array{string, string|null}> $expected
+     */
+    #[Test]
+    #[DataProvider('siteMessageProvider')]
+    public function namesTheMigratedSiteTablesAndFields(string $message, array $expected): void
+    {
+        self::assertSame($expected, TcaMigrationMessage::migratedSiteItems($message));
+    }
+
+    public static function siteMessageProvider(): Generator
+    {
+        yield 'fields of several tables' => [
+            'message' => self::SITE_CONTEXT
+                . "\nThe TCA field 'solr_scheme_read' of table 'site' uses the legacy way of defining 'items' for the"
+                . " 'valuePicker'. Please switch to associated array keys: label, value."
+                . "\nThe TCA field 'solr_core_read' of table 'site_language' uses the legacy way of defining 'items'"
+                . " for the 'valuePicker'. Please switch to associated array keys: label, value.",
+            'expected' => [['site', 'solr_scheme_read'], ['site_language', 'solr_core_read']],
+        ];
+        yield 'regular TCA migration' => [
+            'message' => 'Automatic TCA migration done during bootstrap. Please adapt TCA accordingly, these migrations'
+                . " will be removed. Please adapt these areas:\nThe TCA field 'title' of table 'site' uses an option.",
             'expected' => [],
         ];
     }
